@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 
@@ -25,7 +24,7 @@ func Fetch(ctx context.Context, refs []model.ModuleReference) ([]model.Module, e
 		return nil, err
 	}
 
-	tempDir, err := ioutil.TempDir("", "lichen")
+	tempDir, err := os.MkdirTemp("", "lichen")
 	if err != nil {
 		return nil, fmt.Errorf("failed to create temp directory: %w", err)
 	}
@@ -38,7 +37,7 @@ func Fetch(ctx context.Context, refs []model.ModuleReference) ([]model.Module, e
 		}
 	}
 
-	cmd := exec.CommandContext(ctx, goBin, args...)
+	cmd := exec.CommandContext(ctx, goBin, args...) // #nosec G204
 	cmd.Dir = tempDir
 	out, err := cmd.CombinedOutput()
 	if err != nil {

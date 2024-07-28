@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -101,7 +100,7 @@ func run(c *cli.Context) error {
 func parseConfig(path string) (scan.Config, error) {
 	var conf scan.Config
 	if path != "" {
-		b, err := ioutil.ReadFile(path)
+		b, err := os.ReadFile(filepath.Clean(path))
 		if err != nil {
 			return scan.Config{}, fmt.Errorf("failed to read file %q: %w", path, err)
 		}
@@ -125,7 +124,7 @@ func absolutePaths(paths []string) ([]string, error) {
 }
 
 func writeJSON(path string, summary scan.Summary) error {
-	f, err := os.Create(path)
+	f, err := os.Create(filepath.Clean(path))
 	if err != nil {
 		return fmt.Errorf("failed to create file for json output: %w", err)
 	}
